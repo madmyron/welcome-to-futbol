@@ -17,6 +17,8 @@ export type MatchBox = {
   awaySaves: number
   homeYellows: number
   awayYellows: number
+  homeReds: number
+  awayReds: number
   goals: GoalLine[]
 }
 
@@ -38,6 +40,8 @@ export function matchBox(match: LastMatch): MatchBox {
     awaySaves: 0,
     homeYellows: 0,
     awayYellows: 0,
+    homeReds: 0,
+    awayReds: 0,
     goals: [],
   }
   for (const event of match.events) {
@@ -54,6 +58,10 @@ export function matchBox(match: LastMatch): MatchBox {
     if (event.kind === 'card') {
       if (side === 'home') box.homeYellows += 1
       else box.awayYellows += 1
+    }
+    if (event.kind === 'red') {
+      if (side === 'home') box.homeReds += 1
+      else box.awayReds += 1
     }
     if (event.kind === 'goal') {
       box.goals.push({ minute: event.minute, side, name: scorerName(event) })

@@ -69,6 +69,14 @@ export function statsSummary(player: Player): string {
   return `${a.label} ${a.value} · ${b.label} ${b.value} · ${formWord(player.form)}`
 }
 
+function withBookings(player: Player): Player {
+  return {
+    ...player,
+    yellows: player.yellows ?? 0,
+    banGames: player.banGames ?? 0,
+  }
+}
+
 export function withPlayerStats(player: Player): Player {
   if (
     typeof player.pace === 'number' &&
@@ -78,7 +86,7 @@ export function withPlayerStats(player: Player): Player {
     typeof player.body === 'number' &&
     typeof player.form === 'number'
   ) {
-    return player
+    return withBookings(player)
   }
   const o = player.overall
   const wobble = (span: number, salt: number) => {
@@ -91,5 +99,15 @@ export function withPlayerStats(player: Player): Player {
   const defend = player.defend ?? (player.position === 'GK' ? player.defense : wobble(12, 4))
   const body = player.body ?? wobble(14, 5)
   const form = player.form ?? 50 + hashToIndex(player.id, 41)
-  return { ...player, pace, skill, pass, defend, body, form }
+  return {
+    ...player,
+    pace,
+    skill,
+    pass,
+    defend,
+    body,
+    form,
+    yellows: player.yellows ?? 0,
+    banGames: player.banGames ?? 0,
+  }
 }

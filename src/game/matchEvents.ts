@@ -3,6 +3,7 @@
  * Owns commentary text; the score itself comes from the match sim.
  */
 import type { Club, MatchEvent, Player } from '../types/game.ts'
+import { isSuspended } from './cards.ts'
 import { lineupPlayers } from './lineup.ts'
 
 function pick<T>(list: readonly T[]): T {
@@ -15,7 +16,11 @@ function randInt(min: number, max: number): number {
 
 function attacker(players: Player[]): Player {
   const pool = players.filter((p) => p.position === 'FWD' || p.position === 'MID')
-  return pick(pool.length ? pool : players)
+  const from = pool.length ? pool : players
+  if (!from.length) {
+    return { id: 'ghost', name: 'A substitute', position: 'MID' } as Player
+  }
+  return pick(from)
 }
 
 function keeper(players: Player[]): Player {
@@ -35,14 +40,80 @@ function uniqueMinutes(count: number, used: Set<number>): number[] {
   return out.sort((a, b) => a - b)
 }
 
+function eligibleXi(club: Club): Player[] {
+  return lineupPlayers(club).filter((p) => !isSuspended(p))
+}
+
+function pushBooking(
+  events: MatchEvent[],
+  minute: number,
+  side: 'home' | 'away',
+  xi: Player[],
+  yellows: Map<string, number>,
+  sentOff: Set<string>,
+): void {
+  const onPitch = xi.filter((p) => !sentOff.has(p.id))
+  if (!onPitch.length) return
+
+  const alreadyBooked = onPitch.filter((p) => (yellows.get(p.id) ?? 0) >= 1)
+  let booked: Player
+  if (alreadyBooked.length && Math.random() < 0.42) {
+    booked = pick(alreadyBooked)
+  } else {
+    const defs = onPitch.filter((p) => p.position === 'DEF')
+    booked = defs.length && Math.random() < 0.65 ? pick(defs) : pick(onPitch)
+  }
+
+  const prior = yellows.get(booked.id) ?? 0
+  if (prior >= 1) {
+    yellows.set(booked.id, 2)
+    sentOff.add(booked.id)
+    events.push({
+      minute,
+      kind: 'red',
+      side,
+      playerId: booked.id,
+      playerName: booked.name,
+      card: 'second-yellow',
+      text: `Second yellow — RED. ${booked.name} is sent off and misses the next match`,
+    })
+    return
+  }
+
+  if (Math.random() < 0.08) {
+    sentOff.add(booked.id)
+    events.push({
+      minute,
+      kind: 'red',
+      side,
+      playerId: booked.id,
+      playerName: booked.name,
+      card: 'straight-red',
+      text: `RED CARD — ${booked.name}. Three-match ban`,
+    })
+    return
+  }
+
+  yellows.set(booked.id, 1)
+  events.push({
+    minute,
+    kind: 'card',
+    side,
+    playerId: booked.id,
+    playerName: booked.name,
+    card: 'yellow',
+    text: `Yellow card — ${booked.name}`,
+  })
+}
+
 export function buildMatchEvents(
   home: Club,
   away: Club,
   homeGoals: number,
   awayGoals: number,
 ): MatchEvent[] {
-  const homeXi = lineupPlayers(home)
-  const awayXi = lineupPlayers(away)
+  const homeXi = eligibleXi(home)
+  const awayXi = eligibleXi(away)
   const used = new Set<number>([0, 45, 90])
   const events: MatchEvent[] = [
     { minute: 0, kind: 'kickoff', side: 'none', text: 'Kickoff' },
@@ -71,14 +142,16 @@ export function buildMatchEvents(
     })
   }
 
-  const extras = 5 + randInt(0, 3)
+  const yellows = new Map<string, number>()
+  const sentOff = new Set<string>()
+  const extras = 6 + randInt(0, 4)
   for (const minute of uniqueMinutes(extras, used)) {
     const homeAttack = Math.random() < 0.5
     const atkXi = homeAttack ? homeXi : awayXi
     const defXi = homeAttack ? awayXi : homeXi
     const side = homeAttack ? 'home' : 'away'
     const roll = Math.random()
-    if (roll < 0.4) {
+    if (roll < 0.36) {
       const shooter = attacker(atkXi)
       events.push({
         minute,
@@ -87,7 +160,7 @@ export function buildMatchEvents(
         playerName: shooter.name,
         text: `${shooter.name} fires over the bar`,
       })
-    } else if (roll < 0.75) {
+    } else if (roll < 0.68) {
       const shotBy = attacker(atkXi)
       const gk = keeper(defXi)
       events.push({
@@ -98,16 +171,9 @@ export function buildMatchEvents(
         text: `${gk.name} saves from ${shotBy.name}`,
       })
     } else {
-      const defs = defXi.filter((p) => p.position === 'DEF')
-      const booked = defs.length ? pick(defs) : pick(defXi)
       const bookedSide = homeAttack ? 'away' : 'home'
-      events.push({
-        minute,
-        kind: 'card',
-        side: bookedSide,
-        playerName: booked.name,
-        text: `Yellow card — ${booked.name}`,
-      })
+      const bookedXi = homeAttack ? awayXi : homeXi
+      pushBooking(events, minute, bookedSide, bookedXi, yellows, sentOff)
     }
   }
 

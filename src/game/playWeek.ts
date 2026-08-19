@@ -4,7 +4,8 @@
  */
 import type { Club, GameState, LastMatch } from '../types/game.ts'
 import { HUMAN_CLUB_ID, WEEKS_PER_SEASON } from './constants.ts'
-import { applyEnergy, matchdayCash } from './economy.ts'
+import { applyMatchDiscipline } from './cards.ts'
+import { applyEnergy, matchdayReport } from './economy.ts'
 import { generateFreeAgents } from './generatePlayer.ts'
 import { lineupError } from './lineup.ts'
 import { simulateMatch } from './matchSim.ts'
@@ -31,6 +32,7 @@ export function playWeek(state: GameState): GameState {
     const result = simulateMatch(home, away)
     if (fx.homeId === HUMAN_CLUB_ID || fx.awayId === HUMAN_CLUB_ID) {
       lastHumanFixtureId = fx.id
+      const money = matchdayReport(human, fx, result.homeGoals ?? 0, result.awayGoals ?? 0)
       lastMatch = {
         week: fx.week,
         homeName: home.name,
@@ -41,11 +43,11 @@ export function playWeek(state: GameState): GameState {
         events: result.events ?? [],
         homeCrest: home.crest,
         awayCrest: away.crest,
+        money,
       }
-      const delta = matchdayCash(human, fx, result.homeGoals!, result.awayGoals!)
       clubs = clubs.map((c) => {
         if (c.id !== HUMAN_CLUB_ID) return c
-        return applyEnergy({ ...c, cash: c.cash + delta })
+        return applyMatchDiscipline(applyEnergy({ ...c, cash: c.cash + money.net }), result.events ?? [])
       })
     }
     return { ...fx, played: true, ...result }

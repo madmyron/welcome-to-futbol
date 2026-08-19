@@ -80,9 +80,13 @@ export type Player = {
   defend: number
   body: number
   form: number
+  yellows: number
+  banGames: number
 }
 
-export type MatchEventKind = 'kickoff' | 'shot' | 'save' | 'goal' | 'card' | 'ht' | 'ft'
+export type MatchEventKind = 'kickoff' | 'shot' | 'save' | 'goal' | 'card' | 'red' | 'ht' | 'ft'
+
+export type CardKind = 'yellow' | 'second-yellow' | 'straight-red'
 
 export type MatchEvent = {
   minute: number
@@ -90,6 +94,23 @@ export type MatchEvent = {
   side: 'home' | 'away' | 'none'
   text: string
   playerName?: string
+  playerId?: string
+  card?: CardKind
+}
+
+export type MatchMoney = {
+  home: boolean
+  result: 'win' | 'draw' | 'loss'
+  attendance: number
+  tickets: number
+  merch: number
+  hospitality: number
+  concessions: number
+  tours: number
+  winnings: number
+  appearance: number
+  wages: number
+  net: number
 }
 
 export type LastMatch = {
@@ -102,6 +123,7 @@ export type LastMatch = {
   events: MatchEvent[]
   homeCrest: Crest
   awayCrest: Crest
+  money?: MatchMoney
 }
 
 export const PITCH_STYLES = ['plain', 'stripes', 'check'] as const

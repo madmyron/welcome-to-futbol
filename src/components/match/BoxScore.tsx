@@ -1,9 +1,10 @@
 /**
- * After-match box score: goals, shots, saves, cards.
+ * After-match box score: goals, shots, saves, cards, and money.
  * Owns the table; parent passes an already-built LastMatch.
  */
 import { matchBox } from '../../game/matchBox.ts'
 import type { LastMatch } from '../../types/game.ts'
+import { MatchPayout } from './MatchPayout.tsx'
 
 export function BoxScore({ match }: { match: LastMatch }) {
   const box = matchBox(match)
@@ -27,12 +28,14 @@ export function BoxScore({ match }: { match: LastMatch }) {
       <p className="box-line">
         Shots {box.homeShots}–{box.awayShots} · Saves {box.homeSaves}–{box.awaySaves} · Yellows{' '}
         {box.homeYellows}–{box.awayYellows}
+        {box.homeReds || box.awayReds ? ` · Reds ${box.homeReds}–${box.awayReds}` : ''}
       </p>
       {match.recap.slice(1).map((line) => (
         <p key={line} className="muted">
           {line}
         </p>
       ))}
+      {match.money ? <MatchPayout money={match.money} /> : null}
     </div>
   )
 }

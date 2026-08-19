@@ -78,6 +78,15 @@
   font-size: 1.05rem;
 }
 
+.watch-line.kind-card {
+  color: #fbbf24;
+}
+
+.watch-line.kind-red {
+  color: #f87171;
+  font-size: 1.08rem;
+}
+
 .watch-feed {
   list-style: none;
   margin: 0;

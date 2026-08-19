@@ -10,7 +10,7 @@ import { BoxScore } from './BoxScore.tsx'
 import './match-watch.css'
 
 function tickMs(kind: string | undefined): number {
-  if (kind === 'goal') return MATCH_GOAL_TICK_MS
+  if (kind === 'goal' || kind === 'red') return MATCH_GOAL_TICK_MS
   if (kind === 'ht' || kind === 'ft') return 2200
   return MATCH_TICK_MS
 }

@@ -3,6 +3,7 @@
  * Owns who is allowed on the pitch; squad screen calls this before Play.
  */
 import type { Club, Player, Position } from '../types/game.ts'
+import { banLabel, isSuspended } from './cards.ts'
 import { getFormation, type FormationId, type FormationSlots } from './formations.ts'
 
 export function slotsFor(club: Club): FormationSlots {
@@ -25,6 +26,10 @@ export function countByPosition(club: Club): Record<Position, number> {
 
 export function lineupError(club: Club): string | null {
   const need = slotsFor(club)
+  const bannedStarter = lineupPlayers(club).find(isSuspended)
+  if (bannedStarter) {
+    return `${bannedStarter.name} is suspended. Sit them and pick someone else`
+  }
   if (club.lineupIds.length !== 11) {
     return `Pick 11 players (now ${club.lineupIds.length})`
   }
@@ -49,7 +54,7 @@ export function autoLineup(players: Player[], need: FormationSlots): string[] {
   const order: Position[] = ['GK', 'DEF', 'MID', 'FWD']
   for (const pos of order) {
     const pool = players
-      .filter((p) => p.position === pos && !used.has(p.id))
+      .filter((p) => p.position === pos && !used.has(p.id) && !isSuspended(p))
       .sort((a, b) => b.overall - a.overall)
     for (const p of pool.slice(0, need[pos])) {
       used.add(p.id)
@@ -71,6 +76,7 @@ export function applyFormation(club: Club, formationId: FormationId): Club {
 export function startBlockedReason(club: Club, playerId: string): string | null {
   const player = club.players.find((p) => p.id === playerId)
   if (!player) return 'Player not found'
+  if (isSuspended(player)) return banLabel(player) ?? 'Suspended'
   if (club.lineupIds.includes(playerId)) return null
   if (club.lineupIds.length >= 11) return 'Starting 11 is full. Sit someone first.'
   const need = slotsFor(club)

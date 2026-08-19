@@ -342,6 +342,16 @@ h2 {
   background: var(--green-2);
 }
 
+.bookings {
+  font-size: 0.75rem;
+  color: #fbbf24;
+}
+
+.bookings.suspended {
+  color: #f87171;
+  font-weight: 700;
+}
+
 .group-title {
   font-size: 0.75rem;
   letter-spacing: 0.08em;

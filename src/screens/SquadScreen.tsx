@@ -7,6 +7,7 @@ import { PlayerRow } from '../components/squad/PlayerRow.tsx'
 import { useGame } from '../context/useGame.ts'
 import { getFormation } from '../game/formations.ts'
 import { countByPosition, lineupError, slotsFor, startBlockedReason } from '../game/lineup.ts'
+import { isSuspended } from '../game/cards.ts'
 import { formatMoney, sellFee } from '../game/money.ts'
 import { humanClub } from '../game/selectors.ts'
 import { sellBlockedReason } from '../game/transfers.ts'
@@ -33,6 +34,9 @@ export function SquadScreen() {
           {ORDER.map((pos) => `${counts[pos]}/${need[pos]} ${pos}`).join(' · ')}
         </p>
         {problem ? <p className="warn">{problem}</p> : <p className="ok">Lineup is ready.</p>}
+        {club.players.some(isSuspended) ? (
+          <p className="warn">A red or too many yellows means they sit. You cannot start a suspended player.</p>
+        ) : null}
         {counts.MID < need.MID && counts.FWD >= need.FWD ? (
           <p className="warn">
             Sitting mids opens MID spots, not FWD spots. {getFormation(club.formationId).name} starts{' '}

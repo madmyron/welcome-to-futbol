@@ -86,6 +86,10 @@ export function HomeScreen({ onSquad, onMarket }: { onSquad: () => void; onMarke
             home game.
           </li>
           <li>
+            Two yellows in one match is a red — that player misses the next match. Yellows add up: 5 in a season is
+            also a one-match ban (Premier League style).
+          </li>
+          <li>
             Finish top 3 to go up a league. Bottom 3 go down. Crown League is the top; Harbor League is the bottom
             (where you start).
           </li>

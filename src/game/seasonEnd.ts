@@ -4,6 +4,7 @@
  */
 import type { Club, Division, GameState, SeasonReport } from '../types/game.ts'
 import { HUMAN_CLUB_ID, TEAMS_PER_DIVISION } from './constants.ts'
+import { resetSeasonYellows } from './cards.ts'
 import { restSquad } from './economy.ts'
 import { generateFixtures } from './fixtures.ts'
 import { generateFreeAgents } from './generatePlayer.ts'
@@ -43,10 +44,11 @@ export function endSeason(state: GameState): GameState {
   const clubs: Club[] = state.clubs.map((c) => {
     const division = nextDiv.get(c.id) ?? c.division
     const withRest = restSquad({ ...c, division })
+    const players = withRest.players.map(resetSeasonYellows)
     if (c.id === HUMAN_CLUB_ID) {
-      return { ...withRest, cash: c.cash + prize }
+      return { ...withRest, players, cash: c.cash + prize }
     }
-    return withRest
+    return { ...withRest, players }
   })
 
   const after = nextDiv.get(HUMAN_CLUB_ID) ?? human.division

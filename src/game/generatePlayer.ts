@@ -95,6 +95,8 @@ export function generatePlayer(position: Position, minOvr: number, maxOvr: numbe
     age: randInt(18, 34),
     overall: ovr,
     wage: wageForOverall(ovr),
+    yellows: 0,
+    banGames: 0,
   }
 }
 
