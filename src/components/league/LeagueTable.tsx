@@ -15,6 +15,7 @@ export function LeagueTable({ rows, division }: { rows: TableRow[]; division: Di
           <tr>
             <th>#</th>
             <th>Club</th>
+            <th>Pwr</th>
             <th>P</th>
             <th>W</th>
             <th>D</th>
@@ -28,6 +29,7 @@ export function LeagueTable({ rows, division }: { rows: TableRow[]; division: Di
             <tr key={row.clubId} className={row.clubId === HUMAN_CLUB_ID ? 'you' : ''}>
               <td>{i + 1}</td>
               <td className="club-cell">{row.name}</td>
+              <td className="pwr">{row.power}</td>
               <td>{row.played}</td>
               <td>{row.won}</td>
               <td>{row.drawn}</td>
@@ -38,7 +40,7 @@ export function LeagueTable({ rows, division }: { rows: TableRow[]; division: Di
           ))}
         </tbody>
       </table>
-      <p className="muted hint">{promotionHint(division)}</p>
+      <p className="muted hint">{promotionHint(division)} Pwr is the starting 11 ratings added up.</p>
     </div>
   )
 }

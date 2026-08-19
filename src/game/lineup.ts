@@ -48,6 +48,11 @@ export function teamOverall(club: Club): number {
   return Math.round(xi.reduce((sum, p) => sum + p.overall, 0) / xi.length)
 }
 
+/** Sum of overall ratings for players in the starting 11. */
+export function xiPower(club: Club): number {
+  return lineupPlayers(club).reduce((sum, p) => sum + p.overall, 0)
+}
+
 export function autoLineup(players: Player[], need: FormationSlots): string[] {
   const used = new Set<string>()
   const ids: string[] = []

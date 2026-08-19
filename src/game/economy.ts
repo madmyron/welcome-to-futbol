@@ -3,8 +3,8 @@
  * Owns money in and out for one week for the human club.
  */
 import type { Club, Fixture, MatchMoney } from '../types/game.ts'
+import { extraLevel, extraLevelsOf, stadiumCapacity } from './stadium.ts'
 import { getLeague } from './leagues.ts'
-import { hasExtra, stadiumCapacity } from './stadium.ts'
 
 function ticketPrice(division: Club['division']): number {
   return getLeague(division).ticketPrice
@@ -28,11 +28,19 @@ export function matchdayReport(
   const price = ticketPrice(club.division)
   const prizeMult = getLeague(club.division).prizeMult
   const stadium = club.stadium
+  const standLevel = stadium.standLevel
+  const levels = extraLevelsOf(stadium)
+  const shop = extraLevel(stadium, 'shop')
+  const museum = extraLevel(stadium, 'museum')
+  const boxes = extraLevel(stadium, 'hospitality')
+  const screen = extraLevel(stadium, 'screen')
+  const roof = extraLevel(stadium, 'roof')
+  const lights = extraLevel(stadium, 'lights')
 
   if (!home) {
-    const appearance = 18_000
+    const appearance = 18_000 + standLevel * 2_200
     const winnings = result === 'win' ? 12_000 : result === 'draw' ? 4_000 : 0
-    const merch = hasExtra(stadium, 'shop') ? 2_800 : 0
+    const merch = shop > 0 ? 1_800 + shop * 1_400 : 0
     const net = appearance + winnings + merch - wages
     return {
       home: false,
@@ -47,18 +55,23 @@ export function matchdayReport(
       appearance,
       wages,
       net,
+      standLevel,
+      extraLevels: levels,
     }
   }
 
   const crowd = result === 'win' ? 1.08 : result === 'draw' ? 1 : 0.9
-  const fill =
-    0.82 * crowd * (hasExtra(stadium, 'roof') ? 1.08 : 1) * (hasExtra(stadium, 'lights') ? 1.04 : 1)
-  const attendance = Math.round(stadiumCapacity(club) * Math.min(0.98, fill))
-  const tickets = Math.round(attendance * price)
-  const merch = hasExtra(stadium, 'shop') ? Math.round(tickets * 0.1) : 0
-  const hospitality = hasExtra(stadium, 'hospitality') ? Math.round(tickets * 0.16) : 0
-  const concessions = Math.round(tickets * (hasExtra(stadium, 'screen') ? 0.06 : 0.02))
-  const tours = hasExtra(stadium, 'museum') ? Math.round(tickets * 0.05) : 0
+  const fill = Math.min(
+    0.98,
+    0.78 * crowd * (1 + standLevel * 0.025) * (1 + roof * 0.035) * (1 + lights * 0.018),
+  )
+  const attendance = Math.round(stadiumCapacity(club) * fill)
+  const ticketRate = price * (1 + standLevel * 0.045)
+  const tickets = Math.round(attendance * ticketRate)
+  const merch = shop > 0 ? Math.round(tickets * (0.055 + shop * 0.035)) : 0
+  const hospitality = boxes > 0 ? Math.round(tickets * (0.09 + boxes * 0.045)) : 0
+  const concessions = Math.round(tickets * (0.012 * (standLevel + 1) + screen * 0.028))
+  const tours = museum > 0 ? Math.round(tickets * (0.028 + museum * 0.022)) : 0
   const winnings =
     result === 'win' ? Math.round(22_000 * prizeMult) : result === 'draw' ? Math.round(7_000 * prizeMult) : 0
   const net = tickets + merch + hospitality + concessions + tours + winnings - wages
@@ -75,6 +88,8 @@ export function matchdayReport(
     appearance: 0,
     wages,
     net,
+    standLevel,
+    extraLevels: levels,
   }
 }
 

@@ -385,6 +385,28 @@ h2 {
   background: #1a7f4c33;
 }
 
+.league-table .pwr {
+  font-weight: 800;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.pwr {
+  font-weight: 800;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.matchup-power {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 6px 0 4px;
+}
+
 .league-table .pts {
   font-weight: 800;
   color: var(--gold);

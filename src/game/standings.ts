@@ -3,10 +3,12 @@
  * Owns standings sort (points, then goal difference, then goals scored).
  */
 import type { Club, Division, Fixture } from '../types/game.ts'
+import { xiPower } from './lineup.ts'
 
 export type TableRow = {
   clubId: string
   name: string
+  power: number
   played: number
   won: number
   drawn: number
@@ -23,6 +25,7 @@ export function standings(clubs: Club[], fixtures: Fixture[], division: Division
     rows.set(club.id, {
       clubId: club.id,
       name: club.name,
+      power: xiPower(club),
       played: 0,
       won: 0,
       drawn: 0,

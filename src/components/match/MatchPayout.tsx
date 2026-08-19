@@ -2,6 +2,7 @@
  * After-match money: attendance, merch, prize, wages, net.
  * Owns the list layout; amounts come from the match report.
  */
+import { extraTierName } from '../../game/stadium.ts'
 import { formatMoney } from '../../game/money.ts'
 import type { MatchMoney } from '../../types/game.ts'
 
@@ -38,15 +39,31 @@ export function MatchPayout({ money }: { money: MatchMoney }) {
           <Row
             label="Attendance / tickets"
             amount={money.tickets}
-            note={`${money.attendance.toLocaleString()} fans`}
+            note={`${money.attendance.toLocaleString()} fans${money.standLevel != null ? ` · stands Lv ${money.standLevel + 1}` : ''}`}
           />
         ) : (
           <Row label="Away appearance" amount={money.appearance} note="Share of their gate" />
         )}
-        <Row label="Merch" amount={money.merch} note={money.merch ? 'Club shop' : undefined} />
-        <Row label="Hospitality" amount={money.hospitality} />
-        <Row label="Concessions" amount={money.concessions} note={money.home ? 'Food and drink' : undefined} />
-        <Row label="Tours / museum" amount={money.tours} />
+        <Row
+          label="Merch"
+          amount={money.merch}
+          note={money.extraLevels?.shop ? extraTierName('shop', money.extraLevels.shop) : undefined}
+        />
+        <Row
+          label="Hospitality"
+          amount={money.hospitality}
+          note={money.extraLevels?.hospitality ? extraTierName('hospitality', money.extraLevels.hospitality) : undefined}
+        />
+        <Row
+          label="Concessions"
+          amount={money.concessions}
+          note={money.home ? 'Food and drink' : undefined}
+        />
+        <Row
+          label="Tours / museum"
+          amount={money.tours}
+          note={money.extraLevels?.museum ? extraTierName('museum', money.extraLevels.museum) : undefined}
+        />
         <Row label="Match prize" amount={money.winnings} />
         <Row label="Wages" amount={-money.wages} />
         <Row label="Net" amount={money.net} strong />

@@ -6,7 +6,7 @@ import { FormationPicker } from '../components/squad/FormationPicker.tsx'
 import { PlayerRow } from '../components/squad/PlayerRow.tsx'
 import { useGame } from '../context/useGame.ts'
 import { getFormation } from '../game/formations.ts'
-import { countByPosition, lineupError, slotsFor, startBlockedReason } from '../game/lineup.ts'
+import { countByPosition, lineupError, slotsFor, startBlockedReason, xiPower } from '../game/lineup.ts'
 import { isSuspended } from '../game/cards.ts'
 import { formatMoney, sellFee } from '../game/money.ts'
 import { humanClub } from '../game/selectors.ts'
@@ -29,7 +29,9 @@ export function SquadScreen() {
         onPick={(formationId) => dispatch({ type: 'SET_FORMATION', formationId })}
       />
       <article className="card">
-        <h2>Starting 11</h2>
+        <h2>
+          Starting 11 <span className="pwr">· {xiPower(club)}</span>
+        </h2>
         <p className={problem ? 'warn' : 'muted'}>
           {ORDER.map((pos) => `${counts[pos]}/${need[pos]} ${pos}`).join(' · ')}
         </p>

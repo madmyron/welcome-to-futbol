@@ -8,8 +8,8 @@ import { MatchRecap } from '../components/match/MatchRecap.tsx'
 import { useGame } from '../context/useGame.ts'
 import { WEEKS_PER_SEASON } from '../game/constants.ts'
 import { getLeague } from '../game/leagues.ts'
-import { lineupError, teamOverall } from '../game/lineup.ts'
-import { clubName, humanClub, nextHumanFixture, opponentOf } from '../game/selectors.ts'
+import { lineupError, xiPower } from '../game/lineup.ts'
+import { clubById, clubName, humanClub, nextHumanFixture, opponentOf } from '../game/selectors.ts'
 import { stadiumCapacity } from '../game/stadium.ts'
 import { standings, placeOf } from '../game/standings.ts'
 
@@ -22,6 +22,11 @@ export function HomeScreen({ onSquad, onMarket }: { onSquad: () => void; onMarke
   const place = placeOf(table, club.id)
   const problem = lineupError(club)
   const canPlay = state.charges >= 1 && !problem && next
+  const opp = next ? clubById(state, opponentOf(next)) : undefined
+  const youPower = xiPower(club)
+  const themPower = opp ? xiPower(opp) : 0
+  const youFavored = youPower > themPower + 12
+  const themFavored = themPower > youPower + 12
 
   return (
     <section className="stack">
@@ -36,9 +41,25 @@ export function HomeScreen({ onSquad, onMarket }: { onSquad: () => void; onMarke
             <h2>
               {next.homeId === club.id ? 'Home vs' : 'Away vs'} {clubName(state, opponentOf(next))}
             </h2>
+            <p className="matchup-power">
+              <span>
+                {club.name} <span className="pwr">{youPower}</span>
+              </span>
+              <span className="muted">vs</span>
+              <span>
+                {opp?.name ?? 'Opponent'} <span className="pwr">{themPower}</span>
+              </span>
+            </p>
+            <p className={youFavored ? 'ok' : themFavored ? 'warn' : 'muted'}>
+              {youFavored
+                ? 'You are favored to win'
+                : themFavored
+                  ? 'They are favored to win'
+                  : 'This one looks even'}
+            </p>
             <p className="muted">
               {place ? `${place}` : '—'} in {getLeague(club.division).name} ({getLeague(club.division).rankLabel}
-              {getLeague(club.division).tag ? ` · ${getLeague(club.division).tag}` : ''}) · XI {teamOverall(club)} ·{' '}
+              {getLeague(club.division).tag ? ` · ${getLeague(club.division).tag}` : ''}) ·{' '}
               {stadiumCapacity(club).toLocaleString()} seats
             </p>
           </>
@@ -82,8 +103,8 @@ export function HomeScreen({ onSquad, onMarket }: { onSquad: () => void; onMarke
             . Sit low-energy players on Squad.
           </li>
           <li>
-            Win matches for ticket money. On Club, expand stands or add a shop, roof, and lights — extras pay more next
-            home game.
+            Win matches for ticket money. On Club, expand stands or upgrade the shop, museum, and other extras — each
+            level pays more next home game.
           </li>
           <li>
             Two yellows in one match is a red — that player misses the next match. Yellows add up: 5 in a season is

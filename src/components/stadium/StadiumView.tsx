@@ -2,7 +2,7 @@
  * Top-down picture of the club’s ground.
  * Owns the drawing; extras and seat color come from stadium data.
  */
-import { hasExtra } from '../../game/stadium.ts'
+import { extraLevel, hasExtra } from '../../game/stadium.ts'
 import type { Crest, Stadium } from '../../types/game.ts'
 import { ClubCrest } from '../crest/ClubCrest.tsx'
 
@@ -27,7 +27,7 @@ export function StadiumView({ stadium, crest }: { stadium: Stadium; crest: Crest
             rx="10"
             fill="none"
             stroke="#cbd5e1"
-            strokeWidth="7"
+            strokeWidth={5 + extraLevel(stadium, 'roof')}
             opacity="0.8"
           />
         ) : null}
@@ -35,21 +35,40 @@ export function StadiumView({ stadium, crest }: { stadium: Stadium; crest: Crest
           <g fill="#e8c547">
             <Light x={bowl.x - 2} y={bowl.y + 8} />
             <Light x={bowl.x + bowl.w - 2} y={bowl.y + 8} />
-            <Light x={bowl.x - 2} y={bowl.y + bowl.h - 30} />
-            <Light x={bowl.x + bowl.w - 2} y={bowl.y + bowl.h - 30} />
+            {extraLevel(stadium, 'lights') >= 2 ? (
+              <>
+                <Light x={bowl.x - 2} y={bowl.y + bowl.h - 30} />
+                <Light x={bowl.x + bowl.w - 2} y={bowl.y + bowl.h - 30} />
+              </>
+            ) : null}
           </g>
         ) : null}
         {hasExtra(stadium, 'screen') ? (
-          <rect x={p.x + 28} y={p.y + p.h + 3} width="44" height="9" rx="1" fill="#0b1220" stroke="#e8c547" />
+          <rect
+            x={p.x + 28}
+            y={p.y + p.h + 3}
+            width={32 + extraLevel(stadium, 'screen') * 6}
+            height={7 + extraLevel(stadium, 'screen')}
+            rx="1"
+            fill="#0b1220"
+            stroke="#e8c547"
+          />
         ) : null}
         {hasExtra(stadium, 'hospitality')
-          ? Array.from({ length: 6 }, (_, i) => (
-              <rect key={i} x={p.x + 10 + i * 14} y={p.y - t + 4} width="10" height="7" rx="1" fill="#e8c547" />
+          ? Array.from({ length: 2 + extraLevel(stadium, 'hospitality') }, (_, i) => (
+              <rect key={i} x={p.x + 8 + i * 14} y={p.y - t + 4} width="10" height="7" rx="1" fill="#e8c547" />
             ))
           : null}
         {hasExtra(stadium, 'shop') ? (
           <g>
-            <rect x="16" y="148" width="40" height="30" rx="3" fill="#b91c1c" />
+            <rect
+              x="16"
+              y={156 - extraLevel(stadium, 'shop') * 2}
+              width={28 + extraLevel(stadium, 'shop') * 4}
+              height={22 + extraLevel(stadium, 'shop') * 2}
+              rx="3"
+              fill="#b91c1c"
+            />
             <text x="36" y="167" textAnchor="middle" fontSize="8" fill="#fff">
               SHOP
             </text>
@@ -57,7 +76,14 @@ export function StadiumView({ stadium, crest }: { stadium: Stadium; crest: Crest
         ) : null}
         {hasExtra(stadium, 'museum') ? (
           <g>
-            <rect x="184" y="148" width="40" height="30" rx="3" fill="#1e3a8a" />
+            <rect
+              x="184"
+              y={156 - extraLevel(stadium, 'museum') * 2}
+              width={28 + extraLevel(stadium, 'museum') * 4}
+              height={22 + extraLevel(stadium, 'museum') * 2}
+              rx="3"
+              fill="#1e3a8a"
+            />
             <text x="204" y="167" textAnchor="middle" fontSize="7" fill="#fff">
               MUSEUM
             </text>

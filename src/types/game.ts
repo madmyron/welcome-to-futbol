@@ -111,6 +111,8 @@ export type MatchMoney = {
   appearance: number
   wages: number
   net: number
+  standLevel?: number
+  extraLevels?: Partial<Record<StadiumExtraId, number>>
 }
 
 export type LastMatch = {
@@ -138,6 +140,7 @@ export type Stadium = {
   seatColor: string
   pitchStyle: PitchStyle
   extras: StadiumExtraId[]
+  extraLevels: Partial<Record<StadiumExtraId, number>>
 }
 
 export type Club = {

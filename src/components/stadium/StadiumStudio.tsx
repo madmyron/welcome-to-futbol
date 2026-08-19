@@ -4,10 +4,13 @@
  */
 import { ColorRow } from '../crest/ColorRow.tsx'
 import { useGame } from '../../context/useGame.ts'
+import { MAX_EXTRA_LEVEL, STADIUM_TIERS } from '../../game/constants.ts'
 import { formatMoney } from '../../game/money.ts'
 import {
   extraBonus,
-  hasExtra,
+  extraLevel,
+  extraTierName,
+  extraUpgradeCost,
   nextStadiumCost,
   stadiumCapacity,
   STADIUM_EXTRAS,
@@ -24,12 +27,15 @@ export function StadiumStudio() {
   const seats = stadiumCapacity(club)
   const bonus = extraBonus(stadium)
   const nextSeats = expandCost != null ? stadiumCapacity({ ...club, stadium: { ...stadium, standLevel: stadium.standLevel + 1 } }) : null
+  const standMax = STADIUM_TIERS.length
+  const standShown = stadium.standLevel + 1
 
   return (
     <article className="card">
       <h2>{stadium.name}</h2>
       <p className="muted">
-        {seats.toLocaleString()} seats · extras {Math.round(bonus * 100)}% extra matchday cash
+        Stands Lv {standShown}/{standMax} · {seats.toLocaleString()} seats · extras about {Math.round(bonus * 100)}% extra
+        matchday cash
       </p>
       <StadiumView stadium={stadium} crest={club.crest} />
 
@@ -70,7 +76,8 @@ export function StadiumStudio() {
         ))}
       </div>
 
-      <h3 className="group-title">Add with revenue</h3>
+      <h3 className="group-title">Revenue upgrades</h3>
+      <p className="muted">Bigger stands and higher extra levels all pay more next home match.</p>
       {expandCost != null && nextSeats != null ? (
         <button
           type="button"
@@ -78,7 +85,7 @@ export function StadiumStudio() {
           disabled={club.cash < expandCost}
           onClick={() => dispatch({ type: 'UPGRADE_STADIUM' })}
         >
-          Expand stands · {formatMoney(expandCost)} → {nextSeats.toLocaleString()} seats
+          Stands Lv {standShown + 1} · {formatMoney(expandCost)} → {nextSeats.toLocaleString()} seats
         </button>
       ) : (
         <p className="ok">Stands are maxed.</p>
@@ -89,24 +96,32 @@ export function StadiumStudio() {
 
       <div className="extra-list">
         {STADIUM_EXTRAS.map((extra) => {
-          const owned = hasExtra(stadium, extra.id)
-          const tooPoor = club.cash < extra.cost
+          const level = extraLevel(stadium, extra.id)
+          const nextCost = extraUpgradeCost(extra.id, level + 1)
+          const tooPoor = nextCost != null && club.cash < nextCost
+          const maxed = level >= MAX_EXTRA_LEVEL
           return (
             <div key={extra.id} className="extra-row">
               <div>
-                <strong>{extra.name}</strong>
-                <p className="muted">{extra.blurb}</p>
+                <strong>
+                  {extra.name}
+                  {level > 0 ? ` · Lv ${level}/${MAX_EXTRA_LEVEL}` : ''}
+                </strong>
+                <p className="muted">
+                  {level > 0 ? extraTierName(extra.id, level) : extra.blurb} · {extra.earn}
+                </p>
               </div>
-              {owned ? (
-                <span className="ok">Built</span>
+              {maxed ? (
+                <span className="ok">Max</span>
               ) : (
                 <button
                   type="button"
                   className="btn small"
                   disabled={tooPoor}
+                  title={tooPoor && nextCost != null ? `Need ${formatMoney(nextCost)}` : undefined}
                   onClick={() => dispatch({ type: 'BUY_STADIUM_EXTRA', extraId: extra.id })}
                 >
-                  {formatMoney(extra.cost)}
+                  {level === 0 ? 'Build' : 'Upgrade'} {formatMoney(nextCost ?? 0)}
                 </button>
               )}
             </div>

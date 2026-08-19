@@ -17,12 +17,13 @@ import {
   type Player,
   type Stadium,
 } from '../types/game.ts'
+import { MIN_FREE_AGENTS } from './constants.ts'
 import { expandToFiveLeagues } from './generateWorld.ts'
 import { generateFreeAgents } from './generatePlayer.ts'
 import { DEFAULT_FORMATION, isFormationId } from './formations.ts'
 import { hashToIndex } from './ids.ts'
 import { withPlayerStats } from './playerStats.ts'
-import { defaultStadium, isExtraId, isPitchStyle } from './stadium.ts'
+import { defaultStadium, isExtraId, isPitchStyle, withExtraLevels } from './stadium.ts'
 
 function isPattern(value: string): value is KitPattern {
   return (KIT_PATTERNS as readonly string[]).includes(value)
@@ -62,15 +63,17 @@ function migrateStadium(club: Club & { stadiumTier?: number; stadium?: Stadium }
   const fallbackLevel = typeof club.stadiumTier === 'number' ? club.stadiumTier : 0
   const base = defaultStadium(club.name, club.stadium?.standLevel ?? fallbackLevel, club.homeKit.primary)
   if (!club.stadium) return base
-  return {
+  const extras = (club.stadium.extras ?? []).filter(isExtraId)
+  return withExtraLevels({
     ...base,
     ...club.stadium,
     name: club.stadium.name || base.name,
     standLevel: club.stadium.standLevel ?? fallbackLevel,
     seatColor: club.stadium.seatColor || base.seatColor,
     pitchStyle: isPitchStyle(club.stadium.pitchStyle) ? club.stadium.pitchStyle : 'stripes',
-    extras: (club.stadium.extras ?? []).filter(isExtraId),
-  }
+    extras,
+    extraLevels: club.stadium.extraLevels ?? {},
+  })
 }
 
 function migrateClub(club: Club): Club {
@@ -93,7 +96,7 @@ export function migrateSave(state: GameState): GameState {
   const upgraded = {
     ...state,
     clubs: state.clubs.map(migrateClub),
-    freeAgents: agents.length < 20 ? generateFreeAgents() : agents,
+    freeAgents: agents.length < MIN_FREE_AGENTS ? generateFreeAgents() : agents,
     lastMatch: state.lastMatch
       ? {
           ...state.lastMatch,

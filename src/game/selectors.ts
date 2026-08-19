@@ -11,8 +11,12 @@ export function humanClub(state: GameState): Club {
   return club
 }
 
+export function clubById(state: GameState, id: string): Club | undefined {
+  return state.clubs.find((c) => c.id === id)
+}
+
 export function clubName(state: GameState, id: string): string {
-  return state.clubs.find((c) => c.id === id)?.name ?? 'Unknown'
+  return clubById(state, id)?.name ?? 'Unknown'
 }
 
 export function nextHumanFixture(state: GameState): Fixture | null {

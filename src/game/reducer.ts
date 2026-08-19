@@ -8,7 +8,7 @@ import { HUMAN_CLUB_ID, MAX_CHARGES } from './constants.ts'
 import { createNewGame } from './generateWorld.ts'
 import { applyFormation, lineupError, toggleLineup } from './lineup.ts'
 import { playWeek } from './playWeek.ts'
-import { buyStadiumExtra, upgradeStadium } from './stadium.ts'
+import { buyStadiumExtra, upgradeStadium, withExtraLevels } from './stadium.ts'
 import { buyPlayer, sellPlayer } from './transfers.ts'
 
 function mapHuman(state: GameState, fn: (club: GameState['clubs'][number]) => GameState['clubs'][number]): GameState {
@@ -52,7 +52,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'BUY_STADIUM_EXTRA':
       return mapHuman(state, (c) => buyStadiumExtra(c, action.extraId))
     case 'SET_STADIUM':
-      return mapHuman(state, (c) => ({ ...c, stadium: action.stadium }))
+      return mapHuman(state, (c) => ({ ...c, stadium: withExtraLevels(action.stadium) }))
     case 'SET_KIT':
       return mapHuman(state, (c) =>
         action.which === 'home' ? { ...c, homeKit: action.kit } : { ...c, awayKit: action.kit },

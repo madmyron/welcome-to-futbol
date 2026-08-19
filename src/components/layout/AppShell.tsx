@@ -2,7 +2,7 @@
  * App chrome: header, scroll area, nav, name/season popups.
  * Owns layout; screens render as children.
  */
-import type { ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { useGame } from '../../context/useGame.ts'
 import { formatMoney } from '../../game/money.ts'
 import { getLeague } from '../../game/leagues.ts'
@@ -25,6 +25,12 @@ export function AppShell({
 }) {
   const { state } = useGame()
   const club = humanClub(state)
+  const scrollRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo(0, 0)
+    window.scrollTo(0, 0)
+  }, [screen])
 
   return (
     <div className="app-shell">
@@ -44,7 +50,7 @@ export function AppShell({
           </span>
         </div>
       </header>
-      <main className="main-scroll">{children}</main>
+      <main ref={scrollRef} className="main-scroll">{children}</main>
       <BottomNav screen={screen} onChange={onScreen} />
       <NameClubModal />
       {state.watchingMatch && state.lastMatch ? (

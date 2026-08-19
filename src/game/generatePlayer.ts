@@ -2,6 +2,7 @@
  * Builds one fake player at a quality band, with stats that differ inside a rating.
  * Owns ratings, wage, and position spread — not squad assembly.
  */
+import { MARKET_COUNTS } from './constants.ts'
 import { NATIONS } from '../data/countries.ts'
 import { FIRST_NAMES, LAST_NAMES } from '../data/names.ts'
 import type { Player, Position } from '../types/game.ts'
@@ -102,18 +103,20 @@ export function generatePlayer(position: Position, minOvr: number, maxOvr: numbe
 
 export function generateFreeAgents(): Player[] {
   const plan: { pos: Position; n: number }[] = [
-    { pos: 'GK', n: 6 },
-    { pos: 'DEF', n: 8 },
-    { pos: 'MID', n: 8 },
-    { pos: 'FWD', n: 8 },
+    { pos: 'GK', n: MARKET_COUNTS.GK },
+    { pos: 'DEF', n: MARKET_COUNTS.DEF },
+    { pos: 'MID', n: MARKET_COUNTS.MID },
+    { pos: 'FWD', n: MARKET_COUNTS.FWD },
   ]
   const players: Player[] = []
   for (const row of plan) {
+    const bargainN = Math.max(3, Math.floor(row.n * 0.22))
+    const starN = Math.max(2, Math.floor(row.n * 0.12))
     for (let i = 0; i < row.n; i += 1) {
-      const bargain = i < 2
-      const star = i === row.n - 1
-      const min = bargain ? 48 : star ? 74 : 56
-      const max = bargain ? 62 : star ? 86 : 76
+      const bargain = i < bargainN
+      const star = i >= row.n - starN
+      const min = bargain ? 44 : star ? 74 : 54
+      const max = bargain ? 60 : star ? 88 : 76
       players.push(generatePlayer(row.pos, min, max))
     }
   }

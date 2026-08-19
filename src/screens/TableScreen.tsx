@@ -8,7 +8,8 @@ import { LeagueTable } from '../components/league/LeagueTable.tsx'
 import { useGame } from '../context/useGame.ts'
 import { HUMAN_CLUB_ID } from '../game/constants.ts'
 import { getLeague } from '../game/leagues.ts'
-import { clubName, humanClub } from '../game/selectors.ts'
+import { clubById, clubName, humanClub } from '../game/selectors.ts'
+import { xiPower } from '../game/lineup.ts'
 import { standings } from '../game/standings.ts'
 import type { Division } from '../types/game.ts'
 
@@ -33,10 +34,17 @@ export function TableScreen() {
           Week {state.week} · {league.short}
         </h2>
         <ul className="fixture-list">
-          {weekGames.map((f) => (
+          {weekGames.map((f) => {
+            const home = clubById(state, f.homeId)
+            const away = clubById(state, f.awayId)
+            const homeP = home ? xiPower(home) : 0
+            const awayP = away ? xiPower(away) : 0
+            return (
             <li key={f.id} className={f.homeId === HUMAN_CLUB_ID || f.awayId === HUMAN_CLUB_ID ? 'you' : ''}>
               <span>
-                {clubName(state, f.homeId)} vs {clubName(state, f.awayId)}
+                {clubName(state, f.homeId)} <span className="pwr">{homeP}</span>
+                {' vs '}
+                {clubName(state, f.awayId)} <span className="pwr">{awayP}</span>
               </span>
               <span>
                 {f.played && f.homeGoals != null && f.awayGoals != null
@@ -44,7 +52,8 @@ export function TableScreen() {
                   : 'vs'}
               </span>
             </li>
-          ))}
+            )
+          })}
         </ul>
       </article>
     </section>
