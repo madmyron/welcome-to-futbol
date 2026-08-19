@@ -1,0 +1,223 @@
+/**
+ * Extra layout for how-to copy, crest picker, and recap button.
+ * Owns those bits so the main stylesheet stays under the size cap.
+ */
+
+.recap .btn {
+  margin-top: 10px;
+}
+
+.box-score {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.box-final {
+  font-weight: 800;
+}
+
+.box-goals {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.box-goals li {
+  padding: 3px 0;
+}
+
+.box-line {
+  font-size: 0.85rem;
+}
+
+.howto {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.howto li {
+  margin-bottom: 6px;
+}
+
+.crest-picks {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+
+.crest-pick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 6px 2px;
+  cursor: pointer;
+  font-size: 0.65rem;
+  text-transform: capitalize;
+  color: var(--muted);
+}
+
+.crest-pick.on {
+  border-color: var(--gold);
+  color: var(--text);
+}
+
+.crest-preview {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 10px;
+}
+
+.color-row {
+  margin-top: 8px;
+}
+
+.transfer-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.transfer-top {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.stat-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 4.6rem 1fr 1.6rem;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.stat-bar {
+  display: block;
+  height: 6px;
+  background: #24344f;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stat-bar i {
+  display: block;
+  height: 100%;
+  background: var(--green-2);
+}
+
+.stat-n {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.formation-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.mini-pitch {
+  width: 92px;
+  height: 92px;
+  flex-shrink: 0;
+}
+
+.pyramid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.pyramid-btn {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.pyramid-btn.tier-1 { width: 72%; }
+.pyramid-btn.tier-2 { width: 80%; }
+.pyramid-btn.tier-3 { width: 88%; }
+.pyramid-btn.tier-4 { width: 94%; }
+.pyramid-btn.tier-5 { width: 100%; }
+
+.pyramid-btn.on {
+  background: var(--green);
+  border-color: var(--green-2);
+  font-weight: 700;
+}
+
+.pyramid-btn.yours:not(.on) {
+  border-color: var(--gold);
+}
+
+.pyramid-tag {
+  color: var(--gold);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.stadium-view {
+  position: relative;
+  margin: 10px 0 12px;
+}
+
+.stadium-view svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
+
+.stadium-crest {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.extra-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.extra-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
