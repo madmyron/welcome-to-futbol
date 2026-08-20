@@ -225,6 +225,13 @@ export type GameAction =
   | { type: 'PLAY_WEEK'; now: number }
   | { type: 'BUY_PLAYER'; playerId: string }
   | { type: 'SELL_PLAYER'; playerId: string }
+  | {
+      type: 'MAKE_TRADE'
+      clubId: string
+      targetPlayerId: string
+      offerPlayerIds: string[]
+      cash: number
+    }
   | { type: 'UPGRADE_STADIUM' }
   | { type: 'BUY_STADIUM_EXTRA'; extraId: StadiumExtraId }
   | { type: 'SET_STADIUM'; stadium: Stadium }

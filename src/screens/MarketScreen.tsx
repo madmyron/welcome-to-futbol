@@ -1,8 +1,9 @@
 /**
- * Buy free agents and sell your extras.
- * Owns the two lists and a “what just happened” line so a tap is obvious.
+ * Buy free agents, sell bench, or trade with other clubs.
+ * Owns the three lists and a “what just happened” line so a tap is obvious.
  */
 import { useState } from 'react'
+import { TradeDesk } from '../components/market/TradeDesk.tsx'
 import { TransferCard } from '../components/market/TransferCard.tsx'
 import { useGame } from '../context/useGame.ts'
 import { MAX_SQUAD } from '../game/constants.ts'
@@ -11,7 +12,7 @@ import { humanClub } from '../game/selectors.ts'
 import { sellBlockedReason } from '../game/transfers.ts'
 import { POSITIONS, type Player, type Position } from '../types/game.ts'
 
-type MarketMode = 'buy' | 'sell'
+type MarketMode = 'buy' | 'sell' | 'trade'
 type PosFilter = 'ALL' | Position
 
 function byOverall(players: Player[]): Player[] {
@@ -43,7 +44,7 @@ export function MarketScreen() {
           Cash {formatMoney(club.cash)} · squad {club.players.length}/{MAX_SQUAD}
         </p>
         {note ? <p className="ok">{note}</p> : null}
-        <div className="seg" role="tablist" aria-label="Buy or sell">
+        <div className="seg" role="tablist" aria-label="Buy, sell, or trade">
           <button
             type="button"
             role="tab"
@@ -60,25 +61,39 @@ export function MarketScreen() {
             className={mode === 'sell' ? 'on' : ''}
             onClick={() => setMode('sell')}
           >
-            Sell bench
+            Sell
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mode === 'trade'}
+            className={mode === 'trade' ? 'on' : ''}
+            onClick={() => setMode('trade')}
+          >
+            Trade
           </button>
         </div>
-        <div className="chip-row" role="tablist" aria-label="Position">
-          {(['ALL', ...POSITIONS] as const).map((item) => (
-            <button
-              key={item}
-              type="button"
-              role="tab"
-              aria-selected={item === pos}
-              className={item === pos ? 'chip on' : 'chip'}
-              onClick={() => setPos(item)}
-            >
-              {item === 'ALL' ? 'All' : item}
-            </button>
-          ))}
-        </div>
+        {mode !== 'trade' ? (
+          <div className="chip-row" role="tablist" aria-label="Position">
+            {(['ALL', ...POSITIONS] as const).map((item) => (
+              <button
+                key={item}
+                type="button"
+                role="tab"
+                aria-selected={item === pos}
+                className={item === pos ? 'chip on' : 'chip'}
+                onClick={() => setPos(item)}
+              >
+                {item === 'ALL' ? 'All' : item}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </article>
-      {mode === 'buy' ? (
+
+      {mode === 'trade' ? (
+        <TradeDesk onDone={setNote} />
+      ) : mode === 'buy' ? (
         <>
           <h3 className="group-title">Players for sale</h3>
           <p className="muted">List refreshes after each match.</p>
@@ -103,7 +118,7 @@ export function MarketScreen() {
                   disabled={disabled}
                   disabledReason={
                     full
-                      ? 'Squad is full. Switch to Sell bench first.'
+                      ? 'Squad is full. Switch to Sell first.'
                       : tooExpensive
                         ? `Need ${formatMoney(fee)}. You have ${formatMoney(club.cash)}.`
                         : undefined

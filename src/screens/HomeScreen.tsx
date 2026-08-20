@@ -100,7 +100,8 @@ export function HomeScreen({ onSquad, onMarket }: { onSquad: () => void; onMarke
             <button type="button" className="link" onClick={onMarket}>
               Market
             </button>
-            . Sit low-energy players on Squad. Starters who play well can rise in power; bad games can drop them.
+            — free agents, or Trade with other clubs for cash and/or bench players. Sit low-energy
+            players on Squad. Starters who play well can rise in power; bad games can drop them.
           </li>
           <li>
             Win matches for ticket money. On Club, expand stands or upgrade the shop, museum, and other extras — each

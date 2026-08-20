@@ -160,6 +160,48 @@
   letter-spacing: 0.02em;
 }
 
+.trade-offer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 0 12px;
+  max-height: 220px;
+  overflow: auto;
+}
+
+.trade-pick {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 10px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.trade-pick.on {
+  border-color: var(--gold);
+  background: #1a7f4c33;
+}
+
+.trade-pick .grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.trade-actions {
+  margin-top: 8px;
+  justify-content: flex-end;
+}
+
+.trade-offer input[type='number'] {
+  margin-top: 6px;
+}
+
 .crest-picks {
   display: grid;
   grid-template-columns: repeat(5, 1fr);

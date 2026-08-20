@@ -10,6 +10,7 @@ import { applyFormation, lineupError, toggleLineup } from './lineup.ts'
 import { playWeek } from './playWeek.ts'
 import { buyStadiumExtra, upgradeStadium, withExtraLevels } from './stadium.ts'
 import { buyPlayer, sellPlayer } from './transfers.ts'
+import { executeTrade } from './trades.ts'
 
 function mapHuman(state: GameState, fn: (club: GameState['clubs'][number]) => GameState['clubs'][number]): GameState {
   return {
@@ -47,6 +48,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return buyPlayer(state, action.playerId)
     case 'SELL_PLAYER':
       return sellPlayer(state, action.playerId)
+    case 'MAKE_TRADE':
+      return executeTrade(state, {
+        clubId: action.clubId,
+        targetPlayerId: action.targetPlayerId,
+        offerPlayerIds: action.offerPlayerIds,
+        cash: action.cash,
+      })
     case 'UPGRADE_STADIUM':
       return mapHuman(state, upgradeStadium)
     case 'BUY_STADIUM_EXTRA':
