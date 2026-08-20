@@ -36,7 +36,7 @@ export function AppShell({
     <div className="app-shell">
       <header className="top-bar">
         <div className="brand">
-          <ClubCrest crest={club.crest} size={40} />
+          <ClubCrest crest={club.crest} size={40} titles={club.crownCups ?? 0} />
           <div>
             <p className="eyebrow">Welcome to Futbol</p>
             <h1>{club.name}</h1>

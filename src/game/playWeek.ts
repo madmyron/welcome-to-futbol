@@ -55,6 +55,8 @@ export function playWeek(state: GameState): GameState {
         events,
         homeCrest: home.crest,
         awayCrest: away.crest,
+        homeCrownCups: home.crownCups ?? 0,
+        awayCrownCups: away.crownCups ?? 0,
         money,
         debrief: matchDebrief({
           us: human,

@@ -6,7 +6,15 @@ import { extraLevel, hasExtra } from '../../game/stadium.ts'
 import type { Crest, Stadium } from '../../types/game.ts'
 import { ClubCrest } from '../crest/ClubCrest.tsx'
 
-export function StadiumView({ stadium, crest }: { stadium: Stadium; crest: Crest }) {
+export function StadiumView({
+  stadium,
+  crest,
+  titles = 0,
+}: {
+  stadium: Stadium
+  crest: Crest
+  titles?: number
+}) {
   const t = 14 + stadium.standLevel * 7
   const p = { x: 70, y: 58, w: 100, h: 70 }
   const bowl = { x: p.x - t, y: p.y - t, w: p.w + t * 2, h: p.h + t * 2 }
@@ -91,7 +99,7 @@ export function StadiumView({ stadium, crest }: { stadium: Stadium; crest: Crest
         ) : null}
       </svg>
       <div className="stadium-crest">
-        <ClubCrest crest={crest} size={36} />
+        <ClubCrest crest={crest} size={36} titles={titles} />
       </div>
     </div>
   )

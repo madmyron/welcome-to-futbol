@@ -1,5 +1,5 @@
 /**
- * Season wrap: prize money, promotion/relegation, new fixtures, rest.
+ * Season wrap: prize money, promotion/relegation, Crown Cup, new fixtures.
  * Owns the jump from week 18 into the next season.
  */
 import type { Club, Division, GameState, SeasonReport } from '../types/game.ts'
@@ -11,17 +11,21 @@ import { generateFreeAgents } from './generatePlayer.ts'
 import { BOTTOM_DIVISION, DIVISIONS, getLeague, TOP_DIVISION } from './leagues.ts'
 import { placeOf, standings } from './standings.ts'
 
-function prizeFor(place: number, division: Division): number {
+function prizeFor(place: number, division: Division, crownChampion: boolean): number {
   const table = [0, 420_000, 260_000, 160_000, 90_000, 70_000, 55_000, 45_000, 40_000, 35_000, 30_000]
   const base = table[place] ?? 30_000
-  return Math.round(base * getLeague(division).prizeMult)
+  const leaguePrize = Math.round(base * getLeague(division).prizeMult)
+  return crownChampion ? leaguePrize + 750_000 : leaguePrize
 }
 
 export function endSeason(state: GameState): GameState {
   const human = state.clubs.find((c) => c.id === HUMAN_CLUB_ID)!
   const table = standings(state.clubs, state.fixtures, human.division)
   const place = placeOf(table, HUMAN_CLUB_ID)
-  const prize = prizeFor(place, human.division)
+  const crownTable = standings(state.clubs, state.fixtures, TOP_DIVISION)
+  const crownWinnerId = crownTable[0]?.clubId ?? null
+  const crownChampion = crownWinnerId === HUMAN_CLUB_ID
+  const prize = prizeFor(place, human.division, crownChampion)
 
   const nextDiv = new Map<string, Division>()
   for (const club of state.clubs) {
@@ -45,13 +49,16 @@ export function endSeason(state: GameState): GameState {
     const division = nextDiv.get(c.id) ?? c.division
     const withRest = restSquad({ ...c, division })
     const players = withRest.players.map(resetSeasonYellows)
+    const wonCup = crownWinnerId === c.id
+    const crownCups = (c.crownCups ?? 0) + (wonCup ? 1 : 0)
     if (c.id === HUMAN_CLUB_ID) {
-      return { ...withRest, players, cash: c.cash + prize }
+      return { ...withRest, players, cash: c.cash + prize, crownCups }
     }
-    return { ...withRest, players }
+    return { ...withRest, players, crownCups }
   })
 
   const after = nextDiv.get(HUMAN_CLUB_ID) ?? human.division
+  const humanAfter = clubs.find((c) => c.id === HUMAN_CLUB_ID)!
   const report: SeasonReport = {
     season: state.season,
     division: human.division,
@@ -59,6 +66,8 @@ export function endSeason(state: GameState): GameState {
     promoted: after < human.division,
     relegated: after > human.division,
     prize,
+    crownChampion,
+    crownCups: humanAfter.crownCups,
   }
 
   const fixtures = DIVISIONS.flatMap((div) => {

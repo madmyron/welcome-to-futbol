@@ -73,5 +73,6 @@ export function generateClub(opts: {
     players,
     lineupIds: autoLineup(players, getFormation(formationId).slots),
     formationId,
+    crownCups: 0,
   }
 }

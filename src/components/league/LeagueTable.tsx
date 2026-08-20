@@ -28,7 +28,16 @@ export function LeagueTable({ rows, division }: { rows: TableRow[]; division: Di
           {rows.map((row, i) => (
             <tr key={row.clubId} className={row.clubId === HUMAN_CLUB_ID ? 'you' : ''}>
               <td>{i + 1}</td>
-              <td className="club-cell">{row.name}</td>
+              <td className="club-cell">
+                {row.name}
+                {row.crownCups > 0 ? (
+                  <span className="cup-stars" title={`${row.crownCups} Crown Cup${row.crownCups === 1 ? '' : 's'}`}>
+                    {' '}
+                    {'★'.repeat(Math.min(row.crownCups, 5))}
+                    {row.crownCups > 5 ? `+${row.crownCups - 5}` : ''}
+                  </span>
+                ) : null}
+              </td>
               <td className="pwr">{row.power}</td>
               <td>{row.played}</td>
               <td>{row.won}</td>
@@ -40,7 +49,9 @@ export function LeagueTable({ rows, division }: { rows: TableRow[]; division: Di
           ))}
         </tbody>
       </table>
-      <p className="muted hint">{promotionHint(division)} Pwr is the starting 11 ratings added up.</p>
+      <p className="muted hint">
+        {promotionHint(division)} Pwr is the starting 11 ratings added up. ★ = Crown Cup titles.
+      </p>
     </div>
   )
 }

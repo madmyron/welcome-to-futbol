@@ -125,6 +125,8 @@ export type LastMatch = {
   events: MatchEvent[]
   homeCrest: Crest
   awayCrest: Crest
+  homeCrownCups?: number
+  awayCrownCups?: number
   money?: MatchMoney
   debrief?: string[]
   ratingMoves?: {
@@ -165,6 +167,8 @@ export type Club = {
   players: Player[]
   lineupIds: string[]
   formationId: FormationId
+  /** Times this club won the Crown League title (Crown Cup). Knockout cups come later. */
+  crownCups: number
 }
 
 export type Fixture = {
@@ -187,6 +191,9 @@ export type SeasonReport = {
   promoted: boolean
   relegated: boolean
   prize: number
+  /** Finished 1st in Crown League — lifted the Crown Cup. */
+  crownChampion: boolean
+  crownCups: number
 }
 
 export type FriendInvite = {

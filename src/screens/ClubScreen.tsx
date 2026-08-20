@@ -4,6 +4,7 @@
  */
 import { useEffect, useRef, useState } from 'react'
 import { InviteFriends } from '../components/club/InviteFriends.tsx'
+import { TrophyCase } from '../components/club/TrophyCase.tsx'
 import { ClubCrest } from '../components/crest/ClubCrest.tsx'
 import { CrestEditor } from '../components/crest/CrestEditor.tsx'
 import { KitPreview } from '../components/kit/KitPreview.tsx'
@@ -49,7 +50,7 @@ export function ClubScreen() {
         <h2>Club</h2>
         <p className="muted">Kits, crest, and stadium save on this device as you tap. Phone and computer are not linked yet.</p>
         <div className="row">
-          <ClubCrest crest={club.crest} size={64} />
+          <ClubCrest crest={club.crest} size={64} titles={club.crownCups ?? 0} />
           <form
             className="grow"
             onSubmit={(e) => {
@@ -73,6 +74,8 @@ export function ClubScreen() {
           </form>
         </div>
       </article>
+
+      <TrophyCase crownCups={club.crownCups ?? 0} crest={club.crest} />
 
       <StadiumStudio />
 

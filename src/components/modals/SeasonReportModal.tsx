@@ -1,5 +1,5 @@
 /**
- * End-of-season overlay: party if you go up, tears if you go down.
+ * End-of-season overlay: Crown Cup party, promotion, or relegation tears.
  * Owns the copy and mood; dismissing clears seasonReport.
  */
 import type { CSSProperties } from 'react'
@@ -9,10 +9,10 @@ import { formatMoney } from '../../game/money.ts'
 import type { Division } from '../../types/game.ts'
 import './season-report.css'
 
-function Bits({ kind }: { kind: 'promo' | 'relegated' }) {
-  const n = kind === 'promo' ? 18 : 14
+function Bits({ kind }: { kind: 'promo' | 'relegated' | 'crown' }) {
+  const n = kind === 'crown' ? 24 : kind === 'promo' ? 18 : 14
   return (
-    <div className={`season-bits ${kind}`} aria-hidden>
+    <div className={`season-bits ${kind === 'crown' ? 'promo' : kind}`} aria-hidden>
       {Array.from({ length: n }, (_, i) => (
         <i key={i} style={{ '--i': i } as CSSProperties} />
       ))}
@@ -26,14 +26,41 @@ export function SeasonReportModal() {
   if (!report || state.watchingMatch) return null
 
   const from = getLeague(report.division)
-  const mood = report.promoted ? 'promo' : report.relegated ? 'relegated' : 'stayed'
+  const mood = report.crownChampion
+    ? 'crown'
+    : report.promoted
+      ? 'promo'
+      : report.relegated
+        ? 'relegated'
+        : 'stayed'
   const nextUp = report.promoted ? getLeague((report.division - 1) as Division) : null
   const nextDown = report.relegated ? getLeague((report.division + 1) as Division) : null
+  const cups = report.crownCups ?? 0
 
   return (
     <div className={`modal-backdrop season-backdrop ${mood}`} role="dialog" aria-labelledby="season-title">
-      {mood === 'promo' || mood === 'relegated' ? <Bits kind={mood} /> : null}
+      {mood === 'promo' || mood === 'relegated' || mood === 'crown' ? <Bits kind={mood} /> : null}
       <div className={`modal season-modal ${mood}`}>
+        {mood === 'crown' ? (
+          <>
+            <p className="season-kicker">The top of the pyramid</p>
+            <img
+              className="crown-cup-art"
+              src="/trophies/crown-cup.png"
+              alt="Crown Cup"
+              width={160}
+              height={160}
+            />
+            <h2 id="season-title">CROWN CUP CHAMPIONS!</h2>
+            <p className="season-yell">
+              Confetti everywhere. The Crown Cup is yours. A gold star goes on the crest — forever.
+            </p>
+            <p>
+              You finished <strong>1st</strong> in {from.name}. Titles held:{' '}
+              <strong className="gold">{cups}</strong>.
+            </p>
+          </>
+        ) : null}
         {mood === 'promo' ? (
           <>
             <p className="season-kicker">The town is bouncing</p>
@@ -75,11 +102,13 @@ export function SeasonReportModal() {
           className="btn primary"
           onClick={() => dispatch({ type: 'DISMISS_SEASON_REPORT' })}
         >
-          {mood === 'promo'
-            ? 'Pop the cork'
-            : mood === 'relegated'
-              ? 'Wipe your face. Next season.'
-              : 'Start next season'}
+          {mood === 'crown'
+            ? 'Lift the cup'
+            : mood === 'promo'
+              ? 'Pop the cork'
+              : mood === 'relegated'
+                ? 'Wipe your face. Next season.'
+                : 'Start next season'}
         </button>
       </div>
     </div>

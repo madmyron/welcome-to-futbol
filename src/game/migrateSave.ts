@@ -83,6 +83,7 @@ function migrateClub(club: Club): Club {
   return {
     ...club,
     formationId,
+    crownCups: typeof club.crownCups === 'number' ? club.crownCups : 0,
     homeKit: { ...club.homeKit, pattern: homePattern },
     awayKit: { ...club.awayKit, pattern: awayPattern },
     crest: migrateCrest(club.crest),

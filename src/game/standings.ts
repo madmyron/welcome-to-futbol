@@ -9,6 +9,7 @@ export type TableRow = {
   clubId: string
   name: string
   power: number
+  crownCups: number
   played: number
   won: number
   drawn: number
@@ -26,6 +27,7 @@ export function standings(clubs: Club[], fixtures: Fixture[], division: Division
       clubId: club.id,
       name: club.name,
       power: xiPower(club),
+      crownCups: club.crownCups ?? 0,
       played: 0,
       won: 0,
       drawn: 0,

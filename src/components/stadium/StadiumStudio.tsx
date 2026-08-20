@@ -37,7 +37,7 @@ export function StadiumStudio() {
         Stands Lv {standShown}/{standMax} · {seats.toLocaleString()} seats · extras about {Math.round(bonus * 100)}% extra
         matchday cash
       </p>
-      <StadiumView stadium={stadium} crest={club.crest} />
+      <StadiumView stadium={stadium} crest={club.crest} titles={club.crownCups ?? 0} />
 
       <p className="muted">Stadium name</p>
       <input

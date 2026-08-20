@@ -112,7 +112,7 @@ export function HomeScreen({ onSquad, onMarket }: { onSquad: () => void; onMarke
           </li>
           <li>
             Finish top 3 to go up a league. Bottom 3 go down. Crown League is the top; Harbor League is the bottom
-            (where you start).
+            (where you start). Win Crown League to lift the Crown Cup — stars go on your crest.
           </li>
         </ul>
       </article>

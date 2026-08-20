@@ -59,14 +59,14 @@ export function MatchWatch() {
         </p>
         <div className="watch-score">
           <div className="watch-side">
-            <ClubCrest crest={match.homeCrest} size={44} />
+            <ClubCrest crest={match.homeCrest} size={44} titles={match.homeCrownCups ?? 0} />
             <span>{match.homeName}</span>
           </div>
           <strong>
             {done ? `${match.homeGoals}–${match.awayGoals}` : `${homeGoals}–${awayGoals}`}
           </strong>
           <div className="watch-side">
-            <ClubCrest crest={match.awayCrest} size={44} />
+            <ClubCrest crest={match.awayCrest} size={44} titles={match.awayCrownCups ?? 0} />
             <span>{match.awayName}</span>
           </div>
         </div>

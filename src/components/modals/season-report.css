@@ -3,8 +3,30 @@
  * Owns the overlay look so the global stylesheet stays small.
  */
 
-.season-backdrop.promo {
-  background: #0b1220ee;
+.season-backdrop.crown {
+  background: radial-gradient(circle at 50% 20%, #e8c54744, #0b1220ee 55%);
+}
+
+.season-modal.crown {
+  border-color: #e8c547;
+  box-shadow: 0 0 0 3px #e8c54788, 0 20px 50px #e8c54755;
+  animation: season-pop 0.5s ease-out;
+  text-align: center;
+  align-items: center;
+}
+
+.season-modal.crown h2 {
+  color: var(--gold);
+  font-size: 1.85rem;
+  letter-spacing: 0.02em;
+}
+
+.crown-cup-art {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px #e8c54766);
+  animation: season-pop 0.7s ease-out;
 }
 
 .season-backdrop.relegated {
