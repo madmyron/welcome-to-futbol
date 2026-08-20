@@ -2,12 +2,26 @@
  * Live match overlay: scoreboard plus action as the minutes tick.
  * Owns the watch-along playback; skip jumps to full time.
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { MATCH_GOAL_TICK_MS, MATCH_TICK_MS } from '../../game/constants.ts'
 import { useGame } from '../../context/useGame.ts'
 import { ClubCrest } from '../crest/ClubCrest.tsx'
 import { BoxScore } from './BoxScore.tsx'
 import './match-watch.css'
+
+function WinFireworks() {
+  return (
+    <div className="win-fireworks" aria-hidden>
+      {Array.from({ length: 5 }, (_, burst) => (
+        <span key={burst} className="fw-burst" style={{ '--b': burst } as CSSProperties}>
+          {Array.from({ length: 10 }, (_, spark) => (
+            <i key={spark} style={{ '--s': spark } as CSSProperties} />
+          ))}
+        </span>
+      ))}
+    </div>
+  )
+}
 
 function tickMs(kind: string | undefined): number {
   if (kind === 'goal' || kind === 'red') return MATCH_GOAL_TICK_MS
@@ -38,7 +52,8 @@ export function MatchWatch() {
 
   return (
     <div className="watch-backdrop" role="dialog" aria-labelledby="watch-title">
-      <div className="watch-panel">
+        {done && match.money?.result === 'win' ? <WinFireworks /> : null}
+        <div className={`watch-panel ${done && match.money?.result === 'win' ? 'win' : ''}`}>
         <p className="eyebrow" id="watch-title">
           Week {match.week}
         </p>

@@ -1,0 +1,143 @@
+/**
+ * Season-end mood: confetti for promotion, falling tears for relegation.
+ * Owns the overlay look so the global stylesheet stays small.
+ */
+
+.season-backdrop.promo {
+  background: #0b1220ee;
+}
+
+.season-backdrop.relegated {
+  background: #12080ccc;
+}
+
+.season-modal.promo {
+  border-color: #e8c547;
+  box-shadow: 0 0 0 2px #e8c54755, 0 16px 40px #e8c54733;
+  animation: season-pop 0.45s ease-out;
+}
+
+.season-modal.relegated {
+  border-color: #7f1d1d;
+  background: #1a1014;
+  box-shadow: 0 16px 40px #7f1d1d66;
+  animation: season-sink 0.5s ease-out;
+}
+
+.season-kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.season-modal.relegated .season-kicker {
+  color: #f87171;
+}
+
+.season-modal.promo h2 {
+  color: var(--gold);
+  font-size: 1.7rem;
+}
+
+.season-modal.relegated h2 {
+  color: #fca5a5;
+}
+
+.season-yell {
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.season-bits {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.season-bits i {
+  position: absolute;
+  top: -12px;
+  left: calc(6% + (var(--i) * 5%));
+  animation-duration: calc(1.6s + (var(--i) * 0.12s));
+  animation-delay: calc(var(--i) * 0.05s);
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.season-bits.promo i {
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  background: #e8c547;
+  animation-name: confetti-fall;
+}
+
+.season-bits.promo i:nth-child(3n) {
+  background: #22a35f;
+}
+
+.season-bits.promo i:nth-child(3n + 1) {
+  background: #f4f7fb;
+  width: 6px;
+  height: 10px;
+}
+
+.season-bits.relegated i {
+  width: 6px;
+  height: 10px;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  background: #7dd3fc;
+  opacity: 0.75;
+  animation-name: tear-fall;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(540deg);
+    opacity: 0.2;
+  }
+}
+
+@keyframes tear-fall {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(110vh);
+    opacity: 0.15;
+  }
+}
+
+@keyframes season-pop {
+  from {
+    transform: scale(0.86);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes season-sink {
+  from {
+    transform: translateY(-16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

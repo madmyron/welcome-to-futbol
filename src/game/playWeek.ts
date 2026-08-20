@@ -8,6 +8,8 @@ import { applyMatchDiscipline } from './cards.ts'
 import { applyEnergy, matchdayReport } from './economy.ts'
 import { generateFreeAgents } from './generatePlayer.ts'
 import { lineupError } from './lineup.ts'
+import { matchDebrief } from './matchDebrief.ts'
+import { applyMatchRatings } from './playerRatings.ts'
 import { simulateMatch } from './matchSim.ts'
 import { endSeason } from './seasonEnd.ts'
 
@@ -33,6 +35,16 @@ export function playWeek(state: GameState): GameState {
     if (fx.homeId === HUMAN_CLUB_ID || fx.awayId === HUMAN_CLUB_ID) {
       lastHumanFixtureId = fx.id
       const money = matchdayReport(human, fx, result.homeGoals ?? 0, result.awayGoals ?? 0)
+      const ourGoals = fx.homeId === HUMAN_CLUB_ID ? result.homeGoals ?? 0 : result.awayGoals ?? 0
+      const theirGoals = fx.homeId === HUMAN_CLUB_ID ? result.awayGoals ?? 0 : result.homeGoals ?? 0
+      const them = fx.homeId === HUMAN_CLUB_ID ? away : home
+      const ourSide = fx.homeId === HUMAN_CLUB_ID ? 'home' : 'away'
+      const events = result.events ?? []
+      const humanNow = clubById(clubs, HUMAN_CLUB_ID)
+      const afterCash = applyEnergy({ ...humanNow, cash: humanNow.cash + money.net })
+      const afterCards = applyMatchDiscipline(afterCash, events)
+      const rated = applyMatchRatings(afterCards, events, ourSide, ourGoals, theirGoals)
+      clubs = clubs.map((c) => (c.id === HUMAN_CLUB_ID ? rated.club : c))
       lastMatch = {
         week: fx.week,
         homeName: home.name,
@@ -40,15 +52,20 @@ export function playWeek(state: GameState): GameState {
         homeGoals: result.homeGoals ?? 0,
         awayGoals: result.awayGoals ?? 0,
         recap: result.recap ?? [],
-        events: result.events ?? [],
+        events,
         homeCrest: home.crest,
         awayCrest: away.crest,
         money,
+        debrief: matchDebrief({
+          us: human,
+          them,
+          home: fx.homeId === HUMAN_CLUB_ID,
+          ourGoals,
+          theirGoals,
+          events,
+        }),
+        ratingMoves: rated.moves,
       }
-      clubs = clubs.map((c) => {
-        if (c.id !== HUMAN_CLUB_ID) return c
-        return applyMatchDiscipline(applyEnergy({ ...c, cash: c.cash + money.net }), result.events ?? [])
-      })
     }
     return { ...fx, played: true, ...result }
   })

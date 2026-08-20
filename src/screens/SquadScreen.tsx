@@ -4,6 +4,7 @@
  */
 import { FormationPicker } from '../components/squad/FormationPicker.tsx'
 import { PlayerRow } from '../components/squad/PlayerRow.tsx'
+import { PosJump } from '../components/squad/PosJump.tsx'
 import { useGame } from '../context/useGame.ts'
 import { getFormation } from '../game/formations.ts'
 import { countByPosition, lineupError, slotsFor, startBlockedReason, xiPower } from '../game/lineup.ts'
@@ -23,7 +24,7 @@ export function SquadScreen() {
   const problem = lineupError(club)
 
   return (
-    <section className="stack">
+    <section className="stack squad-screen">
       <FormationPicker
         formationId={club.formationId}
         onPick={(formationId) => dispatch({ type: 'SET_FORMATION', formationId })}
@@ -47,7 +48,7 @@ export function SquadScreen() {
         ) : null}
       </article>
       {ORDER.map((pos) => (
-        <div key={pos} className="stack tight">
+        <div key={pos} id={`squad-${pos}`} className="stack tight squad-pos">
           <h3 className="group-title">
             {pos} · {counts[pos]}/{need[pos]}
           </h3>
@@ -106,6 +107,7 @@ export function SquadScreen() {
             })}
         </div>
       ))}
+      <PosJump positions={ORDER} />
     </section>
   )
 }

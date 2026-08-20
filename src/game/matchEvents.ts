@@ -127,6 +127,7 @@ export function buildMatchEvents(
       minute,
       kind: 'goal',
       side: 'home',
+      playerId: scorer.id,
       playerName: scorer.name,
       text: `GOAL! ${scorer.name} (${home.name})`,
     })
@@ -137,6 +138,7 @@ export function buildMatchEvents(
       minute,
       kind: 'goal',
       side: 'away',
+      playerId: scorer.id,
       playerName: scorer.name,
       text: `GOAL! ${scorer.name} (${away.name})`,
     })
@@ -157,6 +159,7 @@ export function buildMatchEvents(
         minute,
         kind: 'shot',
         side,
+        playerId: shooter.id,
         playerName: shooter.name,
         text: `${shooter.name} fires over the bar`,
       })
@@ -167,6 +170,7 @@ export function buildMatchEvents(
         minute,
         kind: 'save',
         side,
+        playerId: gk.id,
         playerName: gk.name,
         text: `${gk.name} saves from ${shotBy.name}`,
       })

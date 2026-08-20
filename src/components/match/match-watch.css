@@ -11,6 +11,59 @@
   place-items: center;
   padding: 16px;
   z-index: 30;
+  overflow: hidden;
+}
+
+.watch-panel.win {
+  border-color: #e8c547;
+  box-shadow: 0 0 0 1px #e8c54755;
+}
+
+.win-fireworks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.fw-burst {
+  position: absolute;
+  left: calc(18% + var(--b) * 16%);
+  top: calc(22% + (var(--b) * 7%));
+  width: 4px;
+  height: 4px;
+}
+
+.fw-burst i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #e8c547;
+  animation: fw-spark 0.9s ease-out forwards;
+  animation-delay: calc(var(--b) * 0.18s);
+  --ang: calc(var(--s) * 36deg);
+}
+
+.fw-burst i:nth-child(odd) {
+  background: #f4f7fb;
+}
+
+.fw-burst i:nth-child(3n) {
+  background: #22a35f;
+}
+
+@keyframes fw-spark {
+  0% {
+    transform: rotate(var(--ang)) translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--ang)) translateY(-52px) scale(0.2);
+    opacity: 0;
+  }
 }
 
 .watch-panel {

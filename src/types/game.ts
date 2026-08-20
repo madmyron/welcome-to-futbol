@@ -126,6 +126,15 @@ export type LastMatch = {
   homeCrest: Crest
   awayCrest: Crest
   money?: MatchMoney
+  debrief?: string[]
+  ratingMoves?: {
+    playerId: string
+    name: string
+    position: Position
+    delta: number
+    from: number
+    to: number
+  }[]
 }
 
 export const PITCH_STYLES = ['plain', 'stripes', 'check'] as const
